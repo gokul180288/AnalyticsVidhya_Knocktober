@@ -1,6 +1,6 @@
 ## setting working directory and seed (edit these before running)
-path <- "./Knocktober"
-setwd(path)
+#path <- "./Knocktober"
+setwd("C:/Users/gokul.paulchamy/Downloads/knocktober_2016_analytics_vidhya")
 
 seed <- 235
 set.seed(seed)
@@ -13,7 +13,7 @@ library(xgboost)
 
 ## loading data
 train <- fread("./Train.csv")
-test <- fread("./Test_D7W1juQ.csv")
+test  <- fread("./Test.csv")
 
 health_camp <- fread("./Health_Camp_Detail.csv")
 
@@ -28,7 +28,7 @@ setnames(health_2, "Health Score", "Health_Score_2")
 patient <- fread("./Patient_Profile.csv")
 
 train[, train_flag := 1]
-test[, train_flag := 0]
+ test[, train_flag := 0]
 
 
 ## processing data
@@ -109,7 +109,7 @@ X_features <- c("Count_Patient", "Count_Patient_Date", "Donation_Flag",
 X_target <- X_train$target
 
 xgtrain <- xgb.DMatrix(data = as.matrix(X_train[, X_features, with = FALSE]), label = X_target, missing = NA)
-xgtest <- xgb.DMatrix(data = as.matrix(X_test[, X_features, with = FALSE]), missing = NA)
+xgtest  <- xgb.DMatrix(data = as.matrix(X_test[, X_features, with = FALSE]), missing = NA)
 
 
 ## xgboost
@@ -147,6 +147,9 @@ View(vimp)
 
 ## submission
 pred <- predict(model_xgb, xgtest)
+
+library(pROC)
+auc(predictions$survived, predictions$pred)
 
 submit <- data.table(Patient_ID = X_test$Patient_ID,
                      Health_Camp_ID = X_test$Health_Camp_ID,
